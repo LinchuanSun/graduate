@@ -1,5 +1,5 @@
 #include "HMC5883L.h"
-
+#include "usart.h"
 const AngleCntlCmd  angleCmd ={
                                 {0xD6,0X6D,0x08,0x08},
                                 {0xD6,0X6D,0x09,0x09}
@@ -10,8 +10,19 @@ uint8_t angleDataRxBuffer[ANGLE_DATA_BUFFER_SIZE] = {0};
 
 uint8_t Hmc5883lReadStart(uint8_t *pData,uint16_t Size)
 {
-    HAL_UART_Receive_IT(&huart2, pData, Size);
-    while(huart2.gState != HAL_UART_STATE_READY);
+    uint16_t i =0;
+    while(HAL_UART_Receive_IT(&huart2, pData, Size) != HAL_OK)
+    {
+//        i++;
+//        if(i>10000)
+//        {
+//            huart2.RxState = HAL_UART_STATE_READY;
+//            //MX_USART2_UART_Init();
+//            __HAL_UNLOCK(&huart2);
+//            i = 0;
+//        }
+        
+    }
     return 0;
 }
 uint8_t Hmc5883lDataHandle(DATA_PACK *data)
