@@ -10,7 +10,7 @@
   * inserted by the user or by software development tools
   * are owned by their respective copyright owners.
   *
-  * COPYRIGHT(c) 2018 STMicroelectronics
+  * COPYRIGHT(c) 2019 STMicroelectronics
   *
   * Redistribution and use in source and binary forms, with or without modification,
   * are permitted provided that the following conditions are met:
@@ -51,6 +51,7 @@
 
 /* USER CODE END Includes */
 
+extern UART_HandleTypeDef huart4;
 extern UART_HandleTypeDef huart1;
 extern UART_HandleTypeDef huart2;
 extern UART_HandleTypeDef huart3;
@@ -61,6 +62,7 @@ extern UART_HandleTypeDef huart3;
 
 extern void _Error_Handler(char *, int);
 
+void MX_UART4_Init(void);
 void MX_USART1_UART_Init(void);
 void MX_USART2_UART_Init(void);
 void MX_USART3_UART_Init(void);

@@ -1,8 +1,8 @@
 /**
   ******************************************************************************
-  * @file           : main.h
-  * @brief          : Header for main.c file.
-  *                   This file contains the common defines of the application.
+  * File Name          : I2C.h
+  * Description        : This file provides code for the configuration
+  *                      of the I2C instances.
   ******************************************************************************
   ** This notice applies to any and all portions of this file
   * that are not between comment pairs USER CODE BEGIN and
@@ -36,98 +36,46 @@
   *
   ******************************************************************************
   */
-
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __MAIN_H__
-#define __MAIN_H__
+#ifndef __i2c_H
+#define __i2c_H
+#ifdef __cplusplus
+ extern "C" {
+#endif
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f4xx_hal.h"
+#include "main.h"
 
 /* USER CODE BEGIN Includes */
 
 /* USER CODE END Includes */
 
-/* Private define ------------------------------------------------------------*/
-
-#define IN_OUT_485_C_Pin GPIO_PIN_3
-#define IN_OUT_485_C_GPIO_Port GPIOC
-#define BOOT1_Pin GPIO_PIN_2
-#define BOOT1_GPIO_Port GPIOB
-#define CH_B_Pin GPIO_PIN_7
-#define CH_B_GPIO_Port GPIOE
-#define UP_CH_Pin GPIO_PIN_8
-#define UP_CH_GPIO_Port GPIOE
-#define DW_CH_Pin GPIO_PIN_9
-#define DW_CH_GPIO_Port GPIOE
-#define OPEN_Pin GPIO_PIN_10
-#define OPEN_GPIO_Port GPIOE
-#define CLOSE_Pin GPIO_PIN_11
-#define CLOSE_GPIO_Port GPIOE
-#define UP_LMT_SW_Pin GPIO_PIN_12
-#define UP_LMT_SW_GPIO_Port GPIOE
-#define DW_LMT_SW_Pin GPIO_PIN_13
-#define DW_LMT_SW_GPIO_Port GPIOE
-#define OPEN_LMT_SW_Pin GPIO_PIN_14
-#define OPEN_LMT_SW_GPIO_Port GPIOE
-#define CLOSE_LMT_SW_Pin GPIO_PIN_15
-#define CLOSE_LMT_SW_GPIO_Port GPIOE
-#define ULN2003_IN4_Pin GPIO_PIN_6
-#define ULN2003_IN4_GPIO_Port GPIOC
-#define ULN2003_IN3_Pin GPIO_PIN_7
-#define ULN2003_IN3_GPIO_Port GPIOC
-#define ULN2003_IN2_Pin GPIO_PIN_8
-#define ULN2003_IN2_GPIO_Port GPIOC
-#define ULN2003_IN1_Pin GPIO_PIN_9
-#define ULN2003_IN1_GPIO_Port GPIOC
-#define ULN_LMT_SW_Pin GPIO_PIN_8
-#define ULN_LMT_SW_GPIO_Port GPIOA
-#define H_LMT_SWL_Pin GPIO_PIN_10
-#define H_LMT_SWL_GPIO_Port GPIOC
-#define H_LMT_SWR_Pin GPIO_PIN_11
-#define H_LMT_SWR_GPIO_Port GPIOC
-#define V_LMT_SW_Pin GPIO_PIN_12
-#define V_LMT_SW_GPIO_Port GPIOC
-#define V_INPT1_Pin GPIO_PIN_0
-#define V_INPT1_GPIO_Port GPIOD
-#define V_INPT2_Pin GPIO_PIN_1
-#define V_INPT2_GPIO_Port GPIOD
-#define V_INPT3_Pin GPIO_PIN_2
-#define V_INPT3_GPIO_Port GPIOD
-#define V_INPT4_Pin GPIO_PIN_3
-#define V_INPT4_GPIO_Port GPIOD
-#define H_INPT1_Pin GPIO_PIN_4
-#define H_INPT1_GPIO_Port GPIOD
-#define H_INPT2_Pin GPIO_PIN_5
-#define H_INPT2_GPIO_Port GPIOD
-#define H_INPT3_Pin GPIO_PIN_6
-#define H_INPT3_GPIO_Port GPIOD
-#define H_INPT4_Pin GPIO_PIN_7
-#define H_INPT4_GPIO_Port GPIOD
-#define DS18B20_Pin GPIO_PIN_5
-#define DS18B20_GPIO_Port GPIOB
-
-/* ########################## Assert Selection ############################## */
-/**
-  * @brief Uncomment the line below to expanse the "assert_param" macro in the 
-  *        HAL drivers code
-  */
-/* #define USE_FULL_ASSERT    1U */
+extern I2C_HandleTypeDef hi2c1;
 
 /* USER CODE BEGIN Private defines */
 
 /* USER CODE END Private defines */
 
-#ifdef __cplusplus
- extern "C" {
-#endif
-void _Error_Handler(char *, int);
+extern void _Error_Handler(char *, int);
 
-#define Error_Handler() _Error_Handler(__FILE__, __LINE__)
+void MX_I2C1_Init(void);
+
+/* USER CODE BEGIN Prototypes */
+
+/* USER CODE END Prototypes */
+
 #ifdef __cplusplus
 }
 #endif
+#endif /*__ i2c_H */
 
-#endif /* __MAIN_H__ */
+/**
+  * @}
+  */
+
+/**
+  * @}
+  */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
