@@ -10,7 +10,7 @@
   * inserted by the user or by software development tools
   * are owned by their respective copyright owners.
   *
-  * COPYRIGHT(c) 2018 STMicroelectronics
+  * COPYRIGHT(c) 2019 STMicroelectronics
   *
   * Redistribution and use in source and binary forms, with or without modification,
   * are permitted provided that the following conditions are met:
@@ -40,6 +40,7 @@
 #include "main.h"
 #include "stm32f4xx_hal.h"
 #include "dma.h"
+#include "i2c.h"
 #include "usart.h"
 #include "gpio.h"
 
@@ -55,7 +56,7 @@
 
 /* USER CODE BEGIN PV */
 /************************************* add by slc start ************************/
- 
+ int countH = 0 ,countV = 0;
    
 /* USER CODE END PV */
 
@@ -68,7 +69,10 @@ void SystemClock_Config(void);
 /* USER CODE END PFP */
 
 /* USER CODE BEGIN 0 */
-
+  void H_Init(void);
+  void V_Init(void);
+  void ALL_Init(void);
+  
 /* USER CODE END 0 */
 
 /**
@@ -88,7 +92,7 @@ int main(void)
   HAL_Init();
 
   /* USER CODE BEGIN Init */
-  
+ 
   /* USER CODE END Init */
 
   /* Configure the system clock */
@@ -103,41 +107,116 @@ int main(void)
   MX_DMA_Init();
   MX_USART1_UART_Init();
   MX_USART2_UART_Init();
+  MX_I2C1_Init();
   MX_USART3_UART_Init();
+  MX_UART4_Init();
   /* USER CODE BEGIN 2 */
- 
+//   Hmc5883lReadStart(angleDataRxBuffer,ANGLE_DATA_BUFFER_SIZE);
+//   DistanceRead(pDistanceData,DISTANCE_RECEIVE_BUFFER_SIZE);
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+  //ALL_Init();
+  
   while (1)
   {
 
   /* USER CODE END WHILE */
 
   /* USER CODE BEGIN 3 */
+    int contData = 0;
+      
+//测量初始角度位置 调试通过
+//    while(1)
+//    {
+//        
+//        if(angleDataIsOk == 1)
+//        {
+//            angleDataIsOk = 0;
+//            HAL_NVIC_EnableIRQ(USART2_IRQn);
+//            Hmc5883lReadStart(angleDataRxBuffer,ANGLE_DATA_BUFFER_SIZE);
 
-    while(distanceIsOk == 0)
-    {
-        HAL_NVIC_EnableIRQ(USART1_IRQn);
-        DistanceRead(pDistanceData,DISTANCE_RECEIVE_BUFFER_SIZE);
-    }
-    while(distanceIsOk == 1 && angleDataIsOk == 0)
-    {
-        HAL_NVIC_EnableIRQ(USART2_IRQn);
-        Hmc5883lReadStart(angleDataRxBuffer,ANGLE_DATA_BUFFER_SIZE);
-    }
-    while(distanceIsOk == 1 && angleDataIsOk == 1)
-    {
+//            
+//        }  
+//    }        
+      
+      
+////      
+//    //测量初始距离 调试成功
+//    while(1) 
+//    {
+//        if(distanceIsOk == 1)
+//        {
+//            distanceIsOk = 0;
+//            HAL_NVIC_EnableIRQ(USART1_IRQn);
+//            DistanceRead(pDistanceData,DISTANCE_RECEIVE_BUFFER_SIZE);
+//        }      
+//    }
+
+      //countH,countV在上面初始化的
+      for(countH = 0;countH < DATA_PACK_H_NUM;countH++)
+      {
+          for(countV = 0;countV < DATA_PACK_V_NUM;countV++)
+          {
+                //读取距离数据
+                while(distanceIsOk == 0)
+                {
+                    HAL_NVIC_EnableIRQ(USART1_IRQn);
+                    DistanceRead(pDistanceData,DISTANCE_RECEIVE_BUFFER_SIZE);
+   
+                }
+                
+                
+                //读取角度数据
+                while( distanceIsOk == 0x01 && angleDataIsOk == 0x00 )
+                {
+                    HAL_NVIC_EnableIRQ(USART2_IRQn);
+                    Hmc5883lReadStart(angleDataRxBuffer,ANGLE_DATA_BUFFER_SIZE);
+                }
+                
+                //数据读取成功，清标记等
+                while(distanceIsOk == 0x01 && angleDataIsOk == 0x01)
+                {   
         
-        //HAL_Delay(1000);
-        HAL_UART_Transmit(&huart1, (uint8_t*)(&dataPack), 8,0x100);
-        distanceIsOk = 0 ;
-        angleDataIsOk = 0;
+                    //HAL_Delay(1000);
+                    //HAL_UART_Transmit(&huart1, (uint8_t*)(&dataPack), 8,0x100);
+                    HAL_UART_Transmit_DMA(&huart4,(uint8_t *)&dataPack,sizeof(dataPack));
+                    //存储数据
+                    dataAll[countH][countV] = dataPack;
+                    memset((void*)(&dataPack.distanceM),0,sizeof(dataPack));
+                   
+                
+                    //清理标志
+                    distanceIsOk = 0 ;
+                    angleDataIsOk = 0;
+                
+                    //垂直方向电机旋转
+                
+                    //
+                    dirver_l298n_vstepmotor(directionV,1);//directionV = 0,逆时针
+                
+                    
         
-    }
-    
-       
+                }  
+            
+          }
+          
+          directionV ^= 0x01;
+          //水平方向电机旋转
+          
+          dirver_l298n_hstepmotor(directionH,1);
+          
+      }
+
+
+//      for(contData = 0; contData < DATA_PACK_H_NUM;++contData)
+//      {
+//          //发送数据
+//          HAL_UART_Transmit_DMA(&huart4,(uint8_t *)dataAll[contData],sizeof(dataAll[contData]));
+//      }
+      while(1);
+      
 
   }
   /* USER CODE END 3 */
@@ -207,12 +286,15 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 {
     if(huart->Instance == USART1)
     {
+        
         if(distanceIsOk == 0 )
         {
             distanceIsOk = DistanceDataHandle(&dataPack); //将距离数据dataPack加入帧
             if(distanceIsOk == 1)
             {
                 HAL_NVIC_DisableIRQ(USART1_IRQn);
+//                DistanceRead(pDistanceData,DISTANCE_RECEIVE_BUFFER_SIZE);   
+//                distanceIsOk = 0;
                 memset((void *)pDistanceData,0,sizeof(pDistanceData));
                 //HAL_UART_Transmit(huart, (uint8_t*)(&dataPack), 8,0x100);
                 
@@ -225,6 +307,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
     }
     if(huart->Instance == USART2)
     {
+        
         if(angleDataIsOk == 0)
         {
             angleDataIsOk = Hmc5883lDataHandle(&dataPack);
@@ -232,6 +315,8 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
             {
                 //HAL_UART_Transmit(huart, (uint8_t*)(angleDataRxBuffer), sizeof(angleDataRxBuffer),0x100);
                 HAL_NVIC_DisableIRQ(USART2_IRQn);
+//                Hmc5883lReadStart(angleDataRxBuffer,ANGLE_DATA_BUFFER_SIZE);
+//                angleDataIsOk = 0;
                 memset((void *)angleDataRxBuffer,0,sizeof(angleDataRxBuffer));
             }
         }
@@ -242,6 +327,85 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
         
     }
     
+}
+
+void ALL_Init(void)
+{
+    H_Init();
+    V_Init();
+    angleDataIsOk = 0;
+    distanceIsOk = 0;
+    
+}
+// 水平方向初始化
+void H_Init(void)
+{
+     while(angleDataIsOk == 0)
+     {
+         HAL_NVIC_EnableIRQ(USART2_IRQn);
+         Hmc5883lReadStart(angleDataRxBuffer,ANGLE_DATA_BUFFER_SIZE);
+     }
+     //读到正确的角度数据,顺时针方向调整
+     while( ( ( (dataPack.angleY_H << 8) | dataPack.angleY_L) < initYAngleH ) && angleDataIsOk)
+     {
+         //旋转电机
+         dirver_l298n_hstepmotor(0,1);//逆时针
+         //继续读角度数据
+         angleDataIsOk = 0;
+         while(angleDataIsOk == 0)
+        {
+            HAL_NVIC_EnableIRQ(USART2_IRQn);
+            Hmc5883lReadStart(angleDataRxBuffer,ANGLE_DATA_BUFFER_SIZE);
+        }
+     }
+     //向逆时针方向调整
+     while( ( ( (dataPack.angleY_H << 8) | dataPack.angleY_L) > initYAngleH ) && angleDataIsOk)
+     {
+         //旋转电机
+         dirver_l298n_hstepmotor(1,1);//顺时针
+         //继续读角度数据
+         angleDataIsOk = 0;
+         while(angleDataIsOk == 0)
+        {
+            HAL_NVIC_EnableIRQ(USART2_IRQn);
+            Hmc5883lReadStart(angleDataRxBuffer,ANGLE_DATA_BUFFER_SIZE);
+        }
+     }
+}
+// 垂直方向初始化
+void V_Init(void)
+{
+     while(angleDataIsOk == 0)
+     {
+         HAL_NVIC_EnableIRQ(USART2_IRQn);
+         Hmc5883lReadStart(angleDataRxBuffer,ANGLE_DATA_BUFFER_SIZE);
+     }
+     //读到正确的角度数据,顺时针方向调整
+     while( ( ( (dataPack.angleX_H << 8) | dataPack.angleX_L) < initYAngleH ) && angleDataIsOk)
+     {
+         //旋转电机
+         dirver_l298n_vstepmotor(0,1);//逆时针转
+         //继续读角度数据
+         angleDataIsOk = 0;
+         while(angleDataIsOk == 0)
+        {
+            HAL_NVIC_EnableIRQ(USART2_IRQn);
+            Hmc5883lReadStart(angleDataRxBuffer,ANGLE_DATA_BUFFER_SIZE);
+        }
+     }
+     //向逆时针方向调整
+     while( ( ( (dataPack.angleX_H << 8) | dataPack.angleX_L) > initYAngleH ) && angleDataIsOk)
+     {
+         //旋转电机
+         dirver_l298n_vstepmotor(1,1);//顺时针转
+         //继续读角度数据
+         angleDataIsOk = 0;
+         while(angleDataIsOk == 0)
+        {
+            HAL_NVIC_EnableIRQ(USART2_IRQn);
+            Hmc5883lReadStart(angleDataRxBuffer,ANGLE_DATA_BUFFER_SIZE);
+        }
+     }
 }
 /* USER CODE END 4 */
 

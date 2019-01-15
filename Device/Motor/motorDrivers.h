@@ -4,8 +4,8 @@
 #include "delay.h"
 
 #define STEPMOTOR_SPEED    10       // 定义步进电机速度，值越小，速度越快
-#define STEPMOTOR_SPEED_V  5
-#define STEPMOTOR_SPEED_H  5
+#define STEPMOTOR_SPEED_V  3
+#define STEPMOTOR_SPEED_H  3
 
 #define STEPMOTOR_DIRECTION    1      // 1:顺时针 0：逆时针
 #define STEPMOTOR_DIRECTION_V  1 

@@ -138,7 +138,7 @@ void driver_uln2003_stepmotor(uint8_t dirc,uint16_t step)
 /*******************************************************************************
 * 函 数 名：dirver_l298n_vstepmotor
 * 功能描述: 安照指定方向和步进角数驱动L298N+42步进电机
-* 输入参数：dirc--电机转向，0-逆时针 1-顺时 
+* 输入参数：dirc--电机转向，0-逆时针 1-顺时 ，传入的step数值为，传入1为1.2度，减速比为1:50 7.5*8/50=1.2度
 * 返 回 值：
 * 调用方法：
 * 步进电机 红色线 A+ 棕色线 A-  黄色线 B+ 绿色线 B- 分别接OUT1-OUT4
@@ -269,7 +269,7 @@ void dirver_l298n_vstepmotor(uint8_t dirc,uint16_t step)
 }
 /*******************************************************************************
 * 函 数 名：dirver_l298n_hstepmotor
-* 功能描述: 安照指定方向和步进角数驱动L298N+42步进电机
+* 功能描述: 安照指定方向和步进角数驱动L298N+42步进电机，7.5减速比1:10，齿轮减速34:85，step传入1得角度7.5*8/10*34/85 = 2.4度
 * 输入参数：dirc--电机转向，0-逆时针 1-顺时 
 * 返 回 值：
 * 调用方法：
@@ -281,28 +281,21 @@ void dirver_l298n_hstepmotor(uint8_t dirc,uint16_t step)
     {
         if(dirc == 1)//顺时针  
         {
-            //A+ B- 1001
-            HAL_GPIO_WritePin(H_INPT1_GPIO_Port,H_INPT1_Pin,GPIO_PIN_SET);
-            HAL_GPIO_WritePin(H_INPT2_GPIO_Port,H_INPT2_Pin,GPIO_PIN_RESET);
-            HAL_GPIO_WritePin(H_INPT3_GPIO_Port,H_INPT3_Pin,GPIO_PIN_RESET);
-            HAL_GPIO_WritePin(H_INPT4_GPIO_Port,H_INPT4_Pin,GPIO_PIN_SET);
-            HAL_Delay(STEPMOTOR_SPEED_H);
-            
-            //B-  0001
+            //A+ B- 1001 
             HAL_GPIO_WritePin(H_INPT1_GPIO_Port,H_INPT1_Pin,GPIO_PIN_RESET);
             HAL_GPIO_WritePin(H_INPT2_GPIO_Port,H_INPT2_Pin,GPIO_PIN_RESET);
             HAL_GPIO_WritePin(H_INPT3_GPIO_Port,H_INPT3_Pin,GPIO_PIN_RESET);
             HAL_GPIO_WritePin(H_INPT4_GPIO_Port,H_INPT4_Pin,GPIO_PIN_SET);
             HAL_Delay(STEPMOTOR_SPEED_H);
             
-            //A-B-0101
+            //A-B-0101 
             HAL_GPIO_WritePin(H_INPT1_GPIO_Port,H_INPT1_Pin,GPIO_PIN_RESET);
             HAL_GPIO_WritePin(H_INPT2_GPIO_Port,H_INPT2_Pin,GPIO_PIN_SET);
             HAL_GPIO_WritePin(H_INPT3_GPIO_Port,H_INPT3_Pin,GPIO_PIN_RESET);
             HAL_GPIO_WritePin(H_INPT4_GPIO_Port,H_INPT4_Pin,GPIO_PIN_SET);
             HAL_Delay(STEPMOTOR_SPEED_H);
             
-            //A-   0100
+            //A-   0100 
             HAL_GPIO_WritePin(H_INPT1_GPIO_Port,H_INPT1_Pin,GPIO_PIN_RESET);
             HAL_GPIO_WritePin(H_INPT2_GPIO_Port,H_INPT2_Pin,GPIO_PIN_SET);
             HAL_GPIO_WritePin(H_INPT3_GPIO_Port,H_INPT3_Pin,GPIO_PIN_RESET);

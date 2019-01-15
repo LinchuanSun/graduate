@@ -10,7 +10,7 @@
   * inserted by the user or by software development tools
   * are owned by their respective copyright owners.
   *
-  * COPYRIGHT(c) 2018 STMicroelectronics
+  * COPYRIGHT(c) 2019 STMicroelectronics
   *
   * Redistribution and use in source and binary forms, with or without modification,
   * are permitted provided that the following conditions are met:
@@ -42,6 +42,7 @@
 #define __MAIN_H__
 
 /* Includes ------------------------------------------------------------------*/
+#include "stm32f4xx_hal.h"
 
 /* USER CODE BEGIN Includes */
 
@@ -49,16 +50,44 @@
 
 /* Private define ------------------------------------------------------------*/
 
-#define ULN2003_IN1_Pin GPIO_PIN_0
-#define ULN2003_IN1_GPIO_Port GPIOC
-#define ULN2003_IN2_Pin GPIO_PIN_1
-#define ULN2003_IN2_GPIO_Port GPIOC
-#define ULN2003_IN3_Pin GPIO_PIN_2
-#define ULN2003_IN3_GPIO_Port GPIOC
-#define ULN2003_IN4_Pin GPIO_PIN_3
-#define ULN2003_IN4_GPIO_Port GPIOC
+#define IN_OUT_485_C_Pin GPIO_PIN_3
+#define IN_OUT_485_C_GPIO_Port GPIOC
 #define BOOT1_Pin GPIO_PIN_2
 #define BOOT1_GPIO_Port GPIOB
+#define CH_B_Pin GPIO_PIN_7
+#define CH_B_GPIO_Port GPIOE
+#define UP_CH_Pin GPIO_PIN_8
+#define UP_CH_GPIO_Port GPIOE
+#define DW_CH_Pin GPIO_PIN_9
+#define DW_CH_GPIO_Port GPIOE
+#define OPEN_Pin GPIO_PIN_10
+#define OPEN_GPIO_Port GPIOE
+#define CLOSE_Pin GPIO_PIN_11
+#define CLOSE_GPIO_Port GPIOE
+#define UP_LMT_SW_Pin GPIO_PIN_12
+#define UP_LMT_SW_GPIO_Port GPIOE
+#define DW_LMT_SW_Pin GPIO_PIN_13
+#define DW_LMT_SW_GPIO_Port GPIOE
+#define OPEN_LMT_SW_Pin GPIO_PIN_14
+#define OPEN_LMT_SW_GPIO_Port GPIOE
+#define CLOSE_LMT_SW_Pin GPIO_PIN_15
+#define CLOSE_LMT_SW_GPIO_Port GPIOE
+#define ULN2003_IN4_Pin GPIO_PIN_6
+#define ULN2003_IN4_GPIO_Port GPIOC
+#define ULN2003_IN3_Pin GPIO_PIN_7
+#define ULN2003_IN3_GPIO_Port GPIOC
+#define ULN2003_IN2_Pin GPIO_PIN_8
+#define ULN2003_IN2_GPIO_Port GPIOC
+#define ULN2003_IN1_Pin GPIO_PIN_9
+#define ULN2003_IN1_GPIO_Port GPIOC
+#define ULN_LMT_SW_Pin GPIO_PIN_8
+#define ULN_LMT_SW_GPIO_Port GPIOA
+#define H_LMT_SWL_Pin GPIO_PIN_10
+#define H_LMT_SWL_GPIO_Port GPIOC
+#define H_LMT_SWR_Pin GPIO_PIN_11
+#define H_LMT_SWR_GPIO_Port GPIOC
+#define V_LMT_SW_Pin GPIO_PIN_12
+#define V_LMT_SW_GPIO_Port GPIOC
 #define V_INPT1_Pin GPIO_PIN_0
 #define V_INPT1_GPIO_Port GPIOD
 #define V_INPT2_Pin GPIO_PIN_1
@@ -75,6 +104,8 @@
 #define H_INPT3_GPIO_Port GPIOD
 #define H_INPT4_Pin GPIO_PIN_7
 #define H_INPT4_GPIO_Port GPIOD
+#define DS18B20_Pin GPIO_PIN_5
+#define DS18B20_GPIO_Port GPIOB
 
 /* ########################## Assert Selection ############################## */
 /**
